@@ -7,7 +7,7 @@ pub enum ConditionExpression {
     Placeholder,
 }
 
-pub fn condition_expr<'a>(i: &'a [u8]) -> nom::IResult<&[u8], ConditionExpression, u32> {
+pub fn condition_expr<'a>(i: &'a [u8]) -> nom::IResult<&[u8], ConditionExpression> {
     nom::IResult::Done(i, ConditionExpression::Placeholder)
 }
 
