@@ -1,23 +1,42 @@
 #[macro_use]
 extern crate nom;
+use nom::multispace;
 
-extern crate serde;
-#[macro_use]
-extern crate serde_derive;
+pub enum ConditionExpression {
+    Field(String),
+    Placeholder,
+}
 
-pub use self::common::{FieldExpression, Literal, Operator, SqlType, TableKey};
-pub use self::column::{Column, ColumnConstraint, ColumnSpecification, FunctionExpression};
-pub use self::condition::{ConditionBase, ConditionExpression, ConditionTree};
-pub use self::join::{JoinConstraint, JoinOperator, JoinRightSide};
-pub use self::select::{selection, JoinClause, SelectStatement};
-pub use self::table::Table;
+pub fn condition_expr<'a>(i: &'a [u8]) -> nom::IResult<&[u8], ConditionExpression, u32> {
+    nom::IResult::Done(i, ConditionExpression::Placeholder)
+}
 
-#[macro_use]
-mod caseless_tag;
-mod keywords;
-mod column;
-mod common;
-mod condition;
-mod join;
-mod select;
-mod table;
+pub struct SelectStatement {
+    pub where_clause: Option<ConditionExpression>,
+}
+
+/// Parse WHERE clause of a selection
+named!(pub where_clause<&[u8], ConditionExpression>,
+    complete!(chain!(
+        multispace? ~
+        cond: condition_expr,
+        || { cond }
+    ))
+);
+
+/// Parse rule for a SQL selection query.
+named!(pub selection<&[u8], SelectStatement>,
+    chain!(
+        select: chain!(
+            tag!("x") ~
+            cond: opt!(where_clause) ~
+            || {
+                SelectStatement {
+                    where_clause: cond,
+                }
+            }
+        ) ~
+        tag!(";"),
+        || { select }
+    )
+);

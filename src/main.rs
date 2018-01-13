@@ -1,7 +1,7 @@
 extern crate nom_sql;
 
 fn main() {
-    let r_txt = "SELECT * FROM Article LEFT JOIN ";
+    let r_txt = "x ";
 
     // we process all queries in lowercase to avoid having to deal with capitalization in the
     // parser.
