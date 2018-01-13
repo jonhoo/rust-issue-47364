@@ -11,19 +11,15 @@ pub fn condition_expr<'a>(i: &'a [u8]) -> nom::IResult<&[u8], ConditionExpressio
     nom::IResult::Done(i, ConditionExpression::Placeholder)
 }
 
-named!(pub where_clause<&[u8], ConditionExpression>,
-    complete!(chain!(
-        multispace? ~
-        cond: condition_expr,
-        || { cond }
-    ))
-);
-
 named!(pub selection<&[u8], Option<ConditionExpression>>,
     chain!(
         select: chain!(
             tag!("x") ~
-            cond: opt!(where_clause) ~
+            cond: opt!(complete!(chain!(
+                multispace? ~
+                cond: condition_expr,
+                || { cond }
+            ))) ~
             || { cond }
         ) ~
         tag!(";"),
