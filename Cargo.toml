@@ -4,4 +4,4 @@ version = "0.1.0"
 authors = ["Jon Gjengset <jon@thesquareplanet.com>"]
 
 [dependencies]
-nom_sql = { path = "nom-sql/" }
+nom = "1.2.4"

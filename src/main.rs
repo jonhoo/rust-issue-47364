@@ -1,11 +1,36 @@
-extern crate nom_sql;
+#[macro_use]
+extern crate nom;
+use nom::multispace;
+
+pub enum ConditionExpression {
+    Field(String),
+    Placeholder,
+}
+
+pub fn condition_expr<'a>(i: &'a [u8]) -> nom::IResult<&[u8], ConditionExpression, u32> {
+    nom::IResult::Done(i, ConditionExpression::Placeholder)
+}
+
+named!(pub where_clause<&[u8], ConditionExpression>,
+    complete!(chain!(
+        multispace? ~
+        cond: condition_expr,
+        || { cond }
+    ))
+);
+
+named!(pub selection<&[u8], Option<ConditionExpression>>,
+    chain!(
+        select: chain!(
+            tag!("x") ~
+            cond: opt!(where_clause) ~
+            || { cond }
+        ) ~
+        tag!(";"),
+        || { select }
+    )
+);
 
 fn main() {
-    let r_txt = "x ";
-
-    // we process all queries in lowercase to avoid having to deal with capitalization in the
-    // parser.
-    let q_bytes = String::from(r_txt.trim()).into_bytes();
-
-    nom_sql::selection(&q_bytes);
+    selection("x ".as_bytes());
 }

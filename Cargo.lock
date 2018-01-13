@@ -4,17 +4,10 @@ version = "1.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
-name = "nom_sql"
-version = "0.0.1"
-dependencies = [
- "nom 1.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
 name = "rust-issue-47364"
 version = "0.1.0"
 dependencies = [
- "nom_sql 0.0.1",
+ "nom 1.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [metadata]
